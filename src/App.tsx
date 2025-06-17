@@ -5,11 +5,14 @@ import { NewsForm } from './components/NewsForm';
 import { NewsList } from './components/NewsList';
 import { toast } from 'react-toastify';
 
+type SortType = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc' | 'none';
+
 function App() {
     const [news, setNews] = useState<News[]>([]);
     const [editingNews, setEditingNews] = useState<News | undefined>();
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [sortType, setSortType] = useState<SortType>('none');
 
     useEffect(() => {
         setNews(newsService.getAll());
@@ -57,6 +60,21 @@ function App() {
         item.content.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const sortedNews = [...filteredNews].sort((a, b) => {
+        switch (sortType) {
+            case 'name-asc':
+                return a.title.localeCompare(b.title);
+            case 'name-desc':
+                return b.title.localeCompare(a.title);
+            case 'date-asc':
+                return new Date(a.date).getTime() - new Date(b.date).getTime();
+            case 'date-desc':
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
+            default:
+                return 0;
+        }
+    });
+
     return (
         <div className="container">
             <div className="header">
@@ -91,7 +109,22 @@ function App() {
                             </button>
                         )}
                     </div>
-                    <span className="news-count">Всего новостей: {news.length}</span>
+                    <div className="header-right">
+                        <div className="sort-container">
+                            <select
+                                value={sortType}
+                                onChange={(e) => setSortType(e.target.value as SortType)}
+                                className="sort-select"
+                            >
+                                <option value="none">Без сортировки</option>
+                                <option value="name-asc">По названию (А-Я)</option>
+                                <option value="name-desc">По названию (Я-А)</option>
+                                <option value="date-asc">По дате (старые)</option>
+                                <option value="date-desc">По дате (новые)</option>
+                            </select>
+                        </div>
+                        <span className="news-count">Всего новостей: {news.length}</span>
+                    </div>
                 </div>
             </div>
 
@@ -107,7 +140,7 @@ function App() {
             )}
 
             <NewsList
-                news={filteredNews}
+                news={sortedNews}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteNews}
             />
