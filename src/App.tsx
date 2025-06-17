@@ -8,6 +8,7 @@ function App() {
     const [news, setNews] = useState<News[]>([]);
     const [editingNews, setEditingNews] = useState<News | undefined>();
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         setNews(newsService.getAll());
@@ -43,6 +44,11 @@ function App() {
         setIsFormVisible(true);
     };
 
+    const filteredNews = news.filter(item => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="container">
             <div className="header">
@@ -57,6 +63,26 @@ function App() {
                     Добавить новость
                 </button>
             </div>
+            <div className="search-container">
+                <div className="search-input-wrapper">
+                    <input
+                        type="text"
+                        placeholder="Поиск по названию или описанию..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="search-input"
+                    />
+                    {searchQuery && (
+                        <button
+                            className="clear-button"
+                            onClick={() => setSearchQuery('')}
+                            aria-label="Clear search"
+                        >
+                            ×
+                        </button>
+                    )}
+                </div>
+            </div>
 
             {isFormVisible && (
                 <NewsForm
@@ -70,7 +96,7 @@ function App() {
             )}
 
             <NewsList
-                news={news}
+                news={filteredNews}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteNews}
             />
