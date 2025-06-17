@@ -24,6 +24,18 @@ body {
   margin-bottom: 2rem;
 }
 
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.news-count {
+  font-size: 0.875rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
 .title {
   font-size: 1.5rem;
   font-weight: bold;
@@ -36,6 +48,11 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .button-primary {
@@ -176,13 +193,22 @@ body {
 .search-container {
   margin-bottom: 20px;
   flex: 1;
-  max-width: 400px;
+  max-width: 100%;
+}
+
+.search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .search-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
+  max-width: 400px;
 }
 
 .search-input {

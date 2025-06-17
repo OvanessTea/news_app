@@ -3,6 +3,7 @@ import { News } from './types/News';
 import { newsService } from './services/newsService';
 import { NewsForm } from './components/NewsForm';
 import { NewsList } from './components/NewsList';
+import { toast } from 'react-toastify';
 
 function App() {
     const [news, setNews] = useState<News[]>([]);
@@ -18,6 +19,7 @@ function App() {
         const newNews = newsService.add(newsData);
         setNews([...news, newNews]);
         setIsFormVisible(false);
+        toast.success('Новость успешно добавлена!');
     };
 
     const handleEditNews = (newsData: Omit<News, 'id' | 'date'>) => {
@@ -25,6 +27,9 @@ function App() {
             const updatedNews = newsService.update(editingNews.id, newsData);
             if (updatedNews) {
                 setNews(news.map(item => item.id === updatedNews.id ? updatedNews : item));
+                toast.success('Новость успешно обновлена!');
+            } else {
+                toast.error('Не удалось обновить новость');
             }
             setEditingNews(undefined);
             setIsFormVisible(false);
@@ -35,6 +40,9 @@ function App() {
         if (window.confirm('Вы уверены, что хотите удалить эту новость?')) {
             if (newsService.delete(id)) {
                 setNews(news.filter(item => item.id !== id));
+                toast.success('Новость успешно удалена!');
+            } else {
+                toast.error('Не удалось удалить новость');
             }
         }
     };
@@ -64,23 +72,26 @@ function App() {
                 </button>
             </div>
             <div className="search-container">
-                <div className="search-input-wrapper">
-                    <input
-                        type="text"
-                        placeholder="Поиск по названию или описанию..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="search-input"
-                    />
-                    {searchQuery && (
-                        <button
-                            className="clear-button"
-                            onClick={() => setSearchQuery('')}
-                            aria-label="Clear search"
-                        >
-                            ×
-                        </button>
-                    )}
+                <div className="search-header">
+                    <div className="search-input-wrapper">
+                        <input
+                            type="text"
+                            placeholder="Поиск по названию или описанию..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input"
+                        />
+                        {searchQuery && (
+                            <button
+                                className="clear-button"
+                                onClick={() => setSearchQuery('')}
+                                aria-label="Clear search"
+                            >
+                                ×
+                            </button>
+                        )}
+                    </div>
+                    <span className="news-count">Всего новостей: {news.length}</span>
                 </div>
             </div>
 

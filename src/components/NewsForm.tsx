@@ -63,6 +63,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({ news, onSubmit, onCancel }) 
                 <button
                     type="submit"
                     className="button button-primary"
+                    disabled={!title || !content}
                 >
                     {news ? 'Сохранить' : 'Добавить'}
                 </button>
